@@ -1,0 +1,12 @@
+SELECT product_id, ROUND(SUM(total_cost)/SUM(unit_count),2) as average_price
+FROM(
+    (SELECT us.product_id, us.purchase_date, (us.units*p.price) AS total_cost, units as unit_count 
+    -- FROM (SELECT * FROM UnitsSold GROUP BY (product_id, purchase_date, units)) as us
+    FROM UnitsSold as us
+    LEFT JOIN Prices as p 
+    ON us.purchase_date <= p.end_date AND us.purchase_date >= p.start_date
+        AND p.product_id = us.product_id) 
+) t_1
+GROUP BY product_id
+UNION 
+(SELECT product_id, 0 FROM Prices WHERE product_id not in (SELECT DISTINCT product_id FROM UnitsSold));
