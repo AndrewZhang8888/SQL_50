@@ -1,0 +1,11 @@
+SELECT user_id, 
+    ROUND(SUM(action='confirmed')/COUNT(*),2) AS confirmation_rate 
+FROM(
+    SELECT user_id, time_stamp, action
+    FROM Confirmations 
+    UNION
+    SELECT s.user_id, NULL as time_stamp, 'timeout' as action
+    FROM Signups s
+    WHERE s.user_id NOT IN (SELECT user_id FROM Confirmations)
+) t_1
+GROUP BY user_id;
