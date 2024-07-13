@@ -1,0 +1,10 @@
+SELECT e.name
+FROM Employee as e
+-- RIGHT JOIN(
+INNER JOIN(
+    SELECT managerID as id
+    FROM Employee
+    GROUP BY managerID 
+    HAVING COUNT(*) >= 5
+) as manager
+ON e.id = manager.id
